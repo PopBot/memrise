@@ -2,6 +2,7 @@ import speech_recognition
 import speech_recognition as sr
 import sys
 from pydub import AudioSegment
+from termcolor import colored
 from pydub.playback import play
 import re
 import os
@@ -10,7 +11,7 @@ from playsound import playsound
 from io import BytesIO
 
 
-def intake(mic, r):
+def intake(mic, r, memorize_phrase):
 
     # check that recognizer and microphone arguments are appropriate type
     if not isinstance(r, sr.Recognizer):
@@ -48,8 +49,12 @@ def intake(mic, r):
 
 if __name__ == '__main__':
     mp3_fp = BytesIO()
+    intro = colored("Welcome to MEMRISE", "green", attrs=["bold"])
     print("Welcome to MEMRISE.")
-    print(speech_recognition.Microphone.list_microphone_names())
+    mics = speech_recognition.Microphone().list_microphone_names()
+    print("Available microphones:")
+    for i, mic in enumerate(mics):
+        print(f"{i}: {mic}")
     mic_index = 0
     try:
         mic_index = int(input("Enter the index of the microphone: "))
@@ -64,12 +69,14 @@ if __name__ == '__main__':
     tts = gtts.gTTS(text=phrase, lang="en")
     filename = "input.mp3"
     tts.write_to_fp(mp3_fp)
-    song = AudioSegment.from_file(mp3_fp, format="mp3")
-    play(song)
+    tts.save(filename)
+    playsound(filename)
+    os.remove(filename)
+    # song = AudioSegment.from_file(mp3_fp)
+    # play(song)
     phrase = phrase.lower()
     phrase = re.sub(r'[^\w\s]', '', phrase)
     phrase_length = len(phrase)
-    print("Tokens: " + str(phrase_length))
     tokens = phrase.split(" ")
     print("Tokens: " + str(tokens))
 
