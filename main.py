@@ -3,9 +3,7 @@ import speech_recognition as sr
 import sys
 import pyfiglet
 import time
-from pydub import AudioSegment
 from termcolor import colored
-from pydub.playback import play
 import re
 import os
 import gtts
