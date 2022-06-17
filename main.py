@@ -12,7 +12,7 @@ from io import BytesIO
 
 
 def intake(mic, r):
-    print(colored("Prepping...", "orange"))
+    print(colored("Prepping...", "green"))
     time.sleep(1)
 
     # check that recognizer and microphone arguments are appropriate type
@@ -22,10 +22,9 @@ def intake(mic, r):
     if not isinstance(mic, sr.Microphone):
         raise TypeError("`microphone` must be `Microphone` instance")
 
-    print(colored("Listening...", "green"))
-
     with mic as source:
-        r.adjust_for_ambient_noise(source, duration=3)
+        r.adjust_for_ambient_noise(source, duration=1)
+        print(colored("Listening...", "green"))
         audio = r.listen(source)
 
     response = {
@@ -62,9 +61,12 @@ def analyze_response(text, tokens):
     compare_of = user_input_tokens if compare_to is tokens else tokens
     tokens_missed = []
     for i in range(len(compare_to)):
-        if compare_to[i] == compare_of[i]:
-            count_correct += 1
-        else:
+        try:
+            if compare_to[i] == compare_of[i]:
+                count_correct += 1
+            else:
+                tokens_missed.append(compare_to[i])
+        except IndexError:
             tokens_missed.append(compare_to[i])
     print(colored("Correct: " + str(count_correct), "yellow"))
     accuracy = count_correct / len(compare_to)
@@ -116,7 +118,7 @@ if __name__ == '__main__':
     recognizer = sr.Recognizer()
     phrase = input("Enter the phrase you want to memorize: ")
     print("You entered: \n" + phrase)
-    tts = gtts.gTTS(text=phrase, lang="en")
+    tts = gtts.gTTS(text="Phrase to memorize: " + phrase, lang="en")
     filename = "input.mp3"
     tts.write_to_fp(mp3_fp)
     tts.save(filename)
