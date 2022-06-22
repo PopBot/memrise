@@ -1,5 +1,6 @@
 import csv
 import text_to_mp3
+import os
 
 
 def convert_verses_to_mp3(csv_file):
@@ -8,8 +9,8 @@ def convert_verses_to_mp3(csv_file):
         for row in reader:
             print(row[0])
             full_verse = row[0] + " — " + row[1]
-            mp3_file = row[1].replace(" ", "_") + ".mp3"
-            text_to_mp3.text_to_mp3(full_verse, mp3_file)
+            mp3_file = row[1].replace(" ", "_")
+            text_to_mp3.text_to_mp3(full_verse, "verse_tracks/" + mp3_file)
 
 
 if __name__ == "__main__":
